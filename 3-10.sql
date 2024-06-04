@@ -1,33 +1,105 @@
-﻿USE QUANLYSINHVIEN
-DELETE DANGKYHOC
-SELECT *FROM DANGKYHOC
+#include <iostream>
+#include <string>
+#include <algorithm>
+
+class SinhVien {
+protected:
+    std::string MaSV;
+    std::string HoTen;
+    int NamSinh;
+
+public:
+    SinhVien() : MaSV(""), HoTen(""), NamSinh(0) {}
+
+    SinhVien(const std::string& maSV, const std::string& hoTen, int namSinh)
+        : MaSV(maSV), HoTen(hoTen), NamSinh(namSinh) {}
+
+    virtual void Nhap() {
+        std::cout << "Nhap Ma SV: ";
+        std::cin >> MaSV;
+        std::cout << "Nhap Ho Ten: ";
+        std::cin.ignore();
+        std::getline(std::cin, HoTen);
+        std::cout << "Nhap Nam Sinh: ";
+        std::cin >> NamSinh;
+    }
+
+    virtual void Xuat() const {
+        std::cout << "Ma SV: " << MaSV << ", Ho Ten: " << HoTen << ", Nam Sinh: " << NamSinh << std::endl;
+    }
+};
+
+class SinhVienCNTT : public SinhVien {
+private:
+    int SoTCTichLuy;
+    float DiemTBTichLuy;
+
+public:
+    SinhVienCNTT() : SinhVien(), SoTCTichLuy(0), DiemTBTichLuy(0.0f) {}
+
+    SinhVienCNTT(const std::string& maSV, const std::string& hoTen, int namSinh, int soTC, float diemTB)
+        : SinhVien(maSV, hoTen, namSinh), SoTCTichLuy(soTC), DiemTBTichLuy(diemTB) {}
+
+    void Nhap() override {
+        SinhVien::Nhap();
+        std::cout << "Nhap So TC Tich Luy: ";
+        std::cin >> SoTCTichLuy;
+        std::cout << "Nhap Diem TB Tich Luy: ";
+        std::cin >> DiemTBTichLuy;
+    }
+
+    void Xuat() const override {
+        SinhVien::Xuat();
+        std::cout << "So TC Tich Luy: " << SoTCTichLuy << ", Diem TB Tich Luy: " << DiemTBTichLuy << std::endl;
+    }
+
+    float getDiemTBTichLuy() const {
+        return DiemTBTichLuy;
+    }
+
+    bool operator>(const SinhVienCNTT& other) const {
+        return this->DiemTBTichLuy > other.DiemTBTichLuy;
+    }
+};
+
+void nhapDanhSachSinhVienCNTT(SinhVienCNTT* ds, int n) {
+    for (int i = 0; i < n; ++i) {
+        std::cout << "Nhap thong tin sinh vien thu " << i + 1 << ":\n";
+        ds[i].Nhap();
+    }
+}
+
+void xuatDanhSachSinhVienCNTT(const SinhVienCNTT* ds, int n) {
+    for (int i = 0; i < n; ++i) {
+        ds[i].Xuat();
+    }
+}
+
+void sapXepSinhVienCNTT(SinhVienCNTT* ds, int n) {
+    std::sort(ds, ds + n, [](const SinhVienCNTT& a, const SinhVienCNTT& b) {
+        return a.getDiemTBTichLuy() < b.getDiemTBTichLuy();
+    });
+}
+
+int main() {
+    int n;
+    std::cout << "Nhap so luong sinh vien CNTT: ";
+    std::cin >> n;
+
+    SinhVienCNTT* ds = new SinhVienCNTT[n];
+
+    nhapDanhSachSinhVienCNTT(ds, n);
+
+    std::cout << "\nDanh sach sinh vien truoc khi sap xep:\n";
+    xuatDanhSachSinhVienCNTT(ds, n);
+
+    sapXepSinhVienCNTT(ds, n);
+
+    std::cout << "\nDanh sach sinh vien sau khi sap xep tang dan theo diem TB Tich Luy:\n";
+    xuatDanhSachSinhVienCNTT(ds, n);
+
+    delete[] ds;
+    return 0;
+}
 
 
-INSERT INTO DANGKYHOC(MASV,MAMON,HOCKY)
-VALUES ('K6100001','GT1',1)
-INSERT INTO DANGKYHOC(MASV,MAMON,HOCKY)
-VALUES ('K6100001','HH',2)
-INSERT INTO DANGKYHOC(MASV,MAMON,HOCKY)
-VALUES ('K6100002','DSTT',1)
-INSERT INTO DANGKYHOC(MASV,MAMON,HOCKY)
-VALUES ('K6100002','GT1',1)
-INSERT INTO DANGKYHOC(MASV,MAMON,HOCKY)
-VALUES ('K6100003','HH',1)
-SELECT MAMON FROM SINHVIEN SV ,DANGKYHOC DKH WHERE  SV.MASV = DKH.MASV AND HOTEN = N'NGUYỄN THỊ HOÀI'
-SELECT SV.HOTEN,SV.MASV,KH.TENKHOA FROM SINHVIEN SV  ,DANGKYHOC DKH , MONHOC MH , KHOA KH WHERE
- SV.MASV = DKH.MASV AND DKH.MAMON = MH.MAMON AND MH.TENMON =N'GIẢI TÍCH 1' AND DKH.HOCKY = 1 AND SV.MAKHOA = KH.MAKHOA;
-
-SELECT SV.HOTEN,SV.MASV,SV.NGAYSINH , KH.TENKHOA   FROM SINHVIEN SV , KHOA KH WHERE SV.MAKHOA = KH.MAKHOA ORDER BY KH.TENKHOA ,SV.HOTEN;
-
-SELECT COUNT(SV.MASV) AS SL ,KH.MAKHOA FROM SINHVIEN SV,KHOA KH WHERE SV.MAKHOA = KH.MAKHOA GROUP BY KH.MAKHOA;
-
-SELECT MH.TENGV , DKH.HOCKY  FROM MONHOC MH , DANGKYHOC DKH WHERE MH.MAMON = DKH.MAMON 
-
-
-UPDATE DANGKYHOC SET MAMON ='GT1' , HOCKY = 2 WHERE  MAMON ='GT1' AND HOCKY = 1
-
-
-DELETE FROM MONHOC  WHERE  MAMON IN (SELECT MAMON FROM DANGKYHOC WHERE TENGV =N'ĐỖ ĐỨC THÁI' AND HOCKY =2);
-
-
-SELECT COUNT(DKH.MAMON) AS SL  FROM DANGKYHOC DKH WHERE DKH.HOCKY = 1;
