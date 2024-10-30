@@ -1,3 +1,5 @@
+
+=SUMPRODUCT((D2:D7="PTV") * (C2:C7>=5000000) * C2:C7)
 #include <iostream>
 #include <string>
 #include <algorithm>
